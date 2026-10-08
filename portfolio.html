@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     作品展示 · 放映厅（Portfolio Showcase）
+     与 index.html 同属一个站点应用，可部署在同一 Web 目录下。
+     幻灯片以 HTML/CSS 原生排版重建：文字内容与原 PPT 完全一致，
+     字体改用本机/网页可用的优雅宋体体系，杜绝截断、重叠与溢出。
+     ============================================================ -->
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="陈裕和的作品展示 —— 见山 · 校园心理健康系统放映厅 + 校园提醒 App 下载">
+<title>作品展示 · 见山 | 陈裕和</title>
+<noscript><style>.pt-curtain{display:none}</style></noscript>
+<style>
+/* ============================================================
+   1. 设计变量与基础 —— 与主页 index.html 保持同一套变量体系
+   ============================================================ */
+:root{
+  --primary:#4f46e5;--primary-soft:#eef2ff;
+  --primary-grad:linear-gradient(135deg,#6366f1 0%,#4f46e5 50%,#7c3aed 100%);
+  --accent:#f59e0b;--accent-grad:linear-gradient(135deg,#fbbf24 0%,#f59e0b 100%);
+  --accent-soft:#fef3c7;--bg:#f8fafc;--bg-2:#ffffff;--surface:#ffffff;--surface-2:#f1f5f9;
+  --text:#0f172a;--text-2:#475569;--text-3:#94a3b8;--border:#e2e8f0;
+  --shadow:0 1px 3px rgba(15,23,42,.06),0 1px 2px rgba(15,23,42,.04);
+  --shadow-lg:0 10px 30px -8px rgba(79,70,229,.15),0 4px 12px rgba(15,23,42,.06);
+  --shadow-hover:0 20px 40px -12px rgba(79,70,229,.22),0 8px 16px rgba(15,23,42,.08);
+  --radius:14px;--radius-sm:10px;--radius-lg:22px;--maxw:1080px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+  --mono:"SF Mono","Fira Code","Cascadia Code",Consolas,"Courier New",monospace;
+  --t:200ms cubic-bezier(.4,0,.2,1);
+  /* 幻灯片字体栈：所有字体本机/网页均可用，保证字形稳定 */
+  --fs-cn:"Noto Serif SC","Source Han Serif SC","Songti SC",STSong,"SimSun",serif;
+  --fs-kai:"KaiTi","STKaiti","Noto Serif SC","SimSun",serif;
+  --fs-en:"Times New Roman",Times,Georgia,serif;
+  /* 封面蓝：严格按 PPT 主题色 accent1 #4874CB 的明度梯度还原 */
+  --sky:linear-gradient(180deg,#2E54A1 0%,#91ACE0 32%,#B6C7EA 56%,#F6F8FC 100%);
+  /* 放映厅专属：影院模式固定深色，不受主题影响 */
+  --theater:#0b0f1a;
+}
+[data-theme="dark"]{
+  --primary:#818cf8;--primary-soft:#1e1b4b;
+  --primary-grad:linear-gradient(135deg,#818cf8 0%,#6366f1 50%,#a78bfa 100%);
+  --accent:#fbbf24;--accent-soft:#422006;--bg:#0b0f1a;--bg-2:#0f1420;
+  --surface:#131a28;--surface-2:#1a2236;--text:#f1f5f9;--text-2:#cbd5e1;
+  --text-3:#64748b;--border:#1e293b;
+  --shadow:0 1px 3px rgba(0,0,0,.3),0 1px 2px rgba(0,0,0,.2);
+  --shadow-lg:0 10px 30px -8px rgba(0,0,0,.5),0 4px 12px rgba(0,0,0,.3);
+  --shadow-hover:0 20px 40px -12px rgba(129,140,248,.25),0 8px 16px rgba(0,0,0,.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:84px;-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;font-size:16px;overflow-x:hidden;transition:background var(--t),color var(--t);-webkit-font-smoothing:antialiased}
+body.viewer-open{overflow:hidden}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;position:relative}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+section{padding:72px 0}
+.section-head{display:flex;align-items:center;gap:14px;margin-bottom:36px}
+.section-head .idx{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--primary);background:var(--primary-soft);padding:4px 10px;border-radius:8px;letter-spacing:.5px}
+.section-head h2{font-size:28px;font-weight:800;letter-spacing:-.5px}
+.section-head .line{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:11px;font-size:14.5px;font-weight:600;transition:all var(--t);border:1px solid transparent;position:relative;overflow:hidden}
+.btn svg{width:17px;height:17px;flex-shrink:0}
+.btn-primary{background:var(--primary-grad);color:#fff;box-shadow:0 4px 14px rgba(79,70,229,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+.btn-ghost{background:var(--surface);border-color:var(--border);color:var(--text-2)}
+.btn-ghost:hover{color:var(--primary);border-color:var(--primary);transform:translateY(-2px)}
+.btn-accent{background:var(--accent-grad);color:#78350f;box-shadow:0 4px 14px rgba(245,158,11,.3)}
+.btn-accent:hover{transform:translateY(-2px);box-shadow:0 12px 26px -8px rgba(245,158,11,.45)}
+
+/* ============================================================
+   2. 顶部导航
+   ============================================================ */
+nav.topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:saturate(180%) blur(16px);-webkit-backdrop-filter:saturate(180%) blur(16px);border-bottom:1px solid var(--border);transition:background var(--t),border-color var(--t)}
+nav.topbar .inner{max-width:var(--maxw);margin:0 auto;padding:0 24px;height:60px;display:flex;align-items:center;gap:20px}
+.brand{font-weight:800;font-size:17px;letter-spacing:-.3px;display:flex;align-items:center;gap:8px;transition:transform var(--t)}
+.brand:hover{transform:scale(1.03)}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--primary-grad);box-shadow:0 0 12px var(--primary)}
+.nav-links{display:flex;gap:4px;margin-left:auto;align-items:center}
+.nav-links a{padding:7px 13px;border-radius:8px;font-size:14px;font-weight:500;color:var(--text-2);transition:all var(--t);white-space:nowrap}
+.nav-links a:hover{color:var(--primary);background:var(--primary-soft);transform:translateY(-1px)}
+.nav-links a.active{color:var(--primary);background:var(--primary-soft);font-weight:600}
+.nav-actions{display:flex;gap:8px;align-items:center;margin-left:8px}
+.icon-btn{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:var(--surface-2);border:1px solid var(--border);color:var(--text-2);transition:all var(--t)}
+.icon-btn:hover{color:var(--primary);border-color:var(--primary);transform:translateY(-2px) scale(1.05)}
+.icon-btn svg{width:18px;height:18px}
+.lang-btn{font-size:12px;font-weight:700;padding:0 10px;width:auto;min-width:38px;letter-spacing:.5px}
+
+/* ============================================================
+   3. 转场幕布（改编自 JIEJOE《006-jump-animation》，MIT License）
+   ============================================================ */
+.pt-curtain{position:fixed;top:0;left:0;width:100%;height:100vh;background:var(--bg);z-index:100000;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:transform 1s ease;transform:translateY(0)}
+.pt-curtain svg{width:5rem;margin-bottom:2rem;overflow:visible;transition:opacity .3s ease}
+.pt-curtain svg circle{fill:none;stroke:var(--primary);stroke-width:6;stroke-dasharray:160;stroke-dashoffset:160;transform-origin:center;animation:pt_rotate 3s ease-in infinite}
+@keyframes pt_rotate{0%{transform:rotate(0deg);stroke-dashoffset:160}100%{transform:rotate(360deg);stroke-dashoffset:-160}}
+.pt-curtain p{font-size:1.6rem;font-weight:900;color:var(--text);letter-spacing:4px;transition:opacity .3s ease}
+.pt-curtain.out{transform:translateY(100%)}
+.pt-curtain.out svg,.pt-curtain.out p{opacity:0}
+
+/* ============================================================
+   4. Hero 首屏
+   ============================================================ */
+.hero{position:relative;padding:150px 0 84px;overflow:hidden}
+.hero-media{position:absolute;inset:0;z-index:-1}
+.hero-media img{width:100%;height:100%;object-fit:cover}
+.hero-media.img-fallback img{display:none}
+.hero-media.img-fallback{background:linear-gradient(160deg,#1e293b 0%,#4f46e5 60%,#7c3aed 100%)}
+.hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 30%,transparent) 0%,color-mix(in srgb,var(--bg) 78%,transparent) 70%,var(--bg) 100%)}
+[data-theme="dark"] .hero-media::after{background:linear-gradient(180deg,rgba(11,15,26,.55) 0%,rgba(11,15,26,.88) 70%,var(--bg) 100%)}
+.hero-inner{position:relative}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-size:13px;font-weight:600;margin-bottom:20px;backdrop-filter:blur(6px)}
+.hero-tag .pulse{width:7px;height:7px;border-radius:50%;background:var(--primary);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(1.4)}}
+.hero-title{font-size:clamp(40px,6vw,76px);font-weight:900;line-height:1.12;letter-spacing:2px;margin-bottom:14px}
+.hero-title .grad{background:linear-gradient(135deg,var(--accent) 0%,var(--primary) 55%,#8b5cf6 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;background-size:200% 200%;animation:gradShift 6s ease infinite}
+@keyframes gradShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hero-sub{font-size:17px;color:var(--text-2);max-width:640px;margin-bottom:22px}
+.hero-chips{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:30px}
+.chip{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--text-2);background:var(--surface);border:1px solid var(--border);padding:5px 12px;border-radius:999px;transition:all var(--t)}
+.chip:hover{color:var(--primary);border-color:var(--primary);transform:translateY(-2px)}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+
+/* ============================================================
+   5. 作品卡片区 —— 三槽位配置驱动
+   ============================================================ */
+.works-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px}
+.works-grid.solo{grid-template-columns:minmax(0,720px);justify-content:center}
+.work-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);transition:transform var(--t),box-shadow var(--t);display:flex;flex-direction:column}
+.work-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-hover)}
+.work-cover{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--surface-2)}
+.cover-mini{position:absolute;inset:0;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.work-card:hover .cover-mini{transform:scale(1.04)}
+.cover-stage{width:1280px;height:720px;transform-origin:top left}
+.work-cover .badge{position:absolute;top:12px;left:12px;font-family:var(--mono);font-size:11.5px;font-weight:700;color:#fff;background:rgba(15,23,42,.55);backdrop-filter:blur(6px);padding:4px 10px;border-radius:999px;letter-spacing:.5px}
+.work-body{padding:22px 24px 24px;display:flex;flex-direction:column;gap:12px;flex:1}
+.work-body h3{font-size:21px;font-weight:800;letter-spacing:-.3px}
+.work-body .desc{font-size:14px;color:var(--text-2)}
+.work-tags{display:flex;gap:8px;flex-wrap:wrap}
+.work-tags span{font-size:12px;font-weight:600;color:var(--primary);background:var(--primary-soft);padding:3px 10px;border-radius:999px}
+.work-actions{display:flex;gap:10px;margin-top:auto;padding-top:6px}
+
+/* ============================================================
+   6. 产品速览 —— PPT 内嵌真实界面截图，点击灯箱放大
+   ============================================================ */
+.ui-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.sec-intro{margin:-20px 0 24px;color:var(--text-3);font-size:14px}
+.ui-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:zoom-in;box-shadow:var(--shadow);transition:transform var(--t),box-shadow var(--t)}
+.ui-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover)}
+.ui-card .shot{aspect-ratio:16/10;overflow:hidden;background:var(--surface-2)}
+.ui-card .shot img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.ui-card:hover .shot img{transform:scale(1.05)}
+.ui-card figcaption{padding:12px 16px;font-size:13px;font-weight:600;color:var(--text-2);display:flex;align-items:center;gap:8px}
+.ui-card figcaption .zoom{margin-left:auto;width:15px;height:15px;color:var(--text-3)}
+.lightbox{position:fixed;inset:0;z-index:96000;background:rgba(5,8,16,.86);display:none;align-items:center;justify-content:center;padding:4vh 4vw;backdrop-filter:blur(4px)}
+.lightbox.open{display:flex}
+.lightbox img{max-width:100%;max-height:100%;border-radius:10px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.lightbox .lb-close{position:absolute;top:18px;right:18px;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;display:grid;place-items:center;transition:all var(--t)}
+.lightbox .lb-close:hover{background:rgba(255,255,255,.24);transform:rotate(90deg)}
+.lightbox .lb-close svg{width:20px;height:20px}
+
+/* ============================================================
+   7. HTML 幻灯片系统 —— 固定 1280×720 设计画布，
+      由查看器按舞台尺寸等比缩放（JS transform:scale）。
+      ● 所有文字真实可选中，英文单词永不截断
+      ● 字号/行高/留白均为可测量的固定指标，overflow 受控
+   ============================================================ */
+.sl{width:1280px;height:720px;position:relative;overflow:hidden;background:#000;color:#fff;font-family:var(--fs-cn);font-weight:400}
+.sl *{box-sizing:border-box}
+.sl img{max-width:none}
+.sl .k{font-family:var(--fs-kai)}
+.sl .en{font-family:var(--fs-en)}
+.sl-sky{background:var(--sky)}
+/* 标题层级（对应 PPT 磅值：96/88/80/60/54/48/44/40/36/32/28/24） */
+.t1{font-size:120px;font-weight:900;line-height:1.15;letter-spacing:5px}
+.t2{font-size:102px;font-weight:900;line-height:1.2;letter-spacing:3px}
+.t3{font-size:77px;font-weight:900;line-height:1.25}
+.t4{font-size:70px;font-weight:700;line-height:1.3}
+.b1{font-size:51px;line-height:1.55}
+.b2{font-size:46px;line-height:1.5}
+.b3{font-size:41px;line-height:1.55}
+.sm{font-size:36px;line-height:1.5}
+.xs{font-size:31px;line-height:1.5}
+
+/* S7 数据页（密排版，严格 flex 预算，绝不溢出） */
+.s7{padding:28px 66px 24px;display:flex;flex-direction:column}
+.s7-ld{font-size:40px;font-weight:900;line-height:1.32;letter-spacing:1px}
+.s7-ld::before{content:"□";margin-right:14px;font-weight:400;opacity:.85}
+.s7-ld2{font-size:58px;font-weight:900;line-height:1.25;text-align:center;margin:4px 0 12px}
+.s7-sub{font-size:22px;line-height:1.55;color:#dbe2ee;border-top:1px solid rgba(255,255,255,.28);padding-top:10px}
+.s7-sub::before{content:"□";margin-right:10px;opacity:.85}
+.s7-src{margin-top:14px;font-size:24px;line-height:1.72;color:#e7ecf5;display:flex;flex-direction:column;gap:9px}
+
+/* S12 三重点页 */
+.s12{padding:24px 60px;display:flex;flex-direction:column}
+.s12-fk{font-size:36px;font-weight:700;line-height:1.35}
+.s12-flow{font-size:36px;font-weight:700;line-height:1.4;margin:2px 0 12px}
+.s12-flow i{font-style:normal;margin:0 12px;color:#f2ba02}
+.s12-list{list-style:none;border-top:1px solid rgba(255,255,255,.3);padding-top:14px;display:flex;flex-direction:column;gap:12px}
+.s12-list li{font-size:34px;line-height:1.45;font-weight:700}
+.s12-list li:nth-child(2)::before,.s12-list li:nth-child(3)::before{content:"□ ";opacity:.85}
+.s12-end{text-align:center;font-size:48px;font-weight:900;margin-top:12px;line-height:1.3}
+
+/* 通用表格（S13/S17/S24）—— th 与 td 同规则覆盖，layout 固定防撑破 */
+.stbl{width:100%;border-collapse:collapse;table-layout:fixed}
+.stbl th,.stbl td{border:1px solid rgba(255,255,255,.28);padding:10px 14px;vertical-align:top;word-break:break-word;overflow-wrap:break-word}
+.stbl th{background:rgba(255,255,255,.12);font-weight:900;text-align:center}
+.s13-t{margin-top:22px}
+.s13-t th{font-size:28px;padding:11px 14px}
+.s13-t td{font-size:23px;line-height:1.6}
+.s17-t{margin-top:12px}
+.s17-t th{font-size:18px;padding:7px 8px}
+.s17-t td{font-size:16.5px;line-height:1.45;padding:7px 9px}
+.s17-t td:first-child{text-align:center;font-weight:900}
+.s24-t{font-size:21px;line-height:1.5}
+.s24-t th{font-size:22px;padding:8px 10px}
+.s24-t td{padding:8px 12px}
+
+/* S14 列表圆点 */
+.dot-list{list-style:none;display:flex;flex-direction:column;gap:28px}
+.dot-list li{position:relative;padding-left:58px;font-size:43px;line-height:1.5;font-weight:700}
+.dot-list li::before{content:"";position:absolute;left:4px;top:23px;width:23px;height:23px;border-radius:50%;background:#fff}
+
+/* S15/16/17/18 内容页通用骨架 */
+.s-chrome{padding:38px 64px;display:flex;flex-direction:column}
+.s-bd{margin-top:30px;font-size:34px;line-height:1.78}
+
+/* S24 竖排标语 */
+.s24-slogan{position:absolute;left:26px;top:212px;height:462px;writing-mode:vertical-rl;-webkit-writing-mode:vertical-rl;font-size:23px;line-height:1.7;letter-spacing:6px;color:#e8edf6;display:flex;align-items:center}
+
+/* ============================================================
+   8. 放映厅查看器 —— 全屏影院模式
+   ============================================================ */
+.viewer{position:fixed;inset:0;z-index:95000;background:var(--theater);display:none;flex-direction:column}
+.viewer.open{display:flex}
+.vw-head{display:flex;align-items:center;gap:16px;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.08);color:#e2e8f0}
+.vw-head .vw-title{font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px;min-width:0}
+.vw-head .vw-title .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-grad);flex-shrink:0}
+.vw-head .vw-title span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vw-counter{margin-left:auto;font-family:var(--mono);font-size:13px;font-weight:600;color:#94a3b8;letter-spacing:1px;flex-shrink:0}
+.vw-close{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;color:#e2e8f0;background:rgba(255,255,255,.08);transition:all var(--t);flex-shrink:0}
+.vw-close:hover{background:rgba(255,255,255,.18);transform:rotate(90deg)}
+.vw-close svg{width:18px;height:18px}
+.vw-stage{flex:1;min-height:0;padding:20px clamp(60px,9vw,120px);position:relative;touch-action:none;overflow:hidden}
+.vw-frame{width:1280px;height:720px;position:absolute;left:50%;top:50%}
+.vw-frame .sl{border-radius:10px;box-shadow:0 24px 70px rgba(0,0,0,.55)}
+.vw-frame.vw-anim{animation:vwFade .32s cubic-bezier(.4,0,.2,1)}
+@keyframes vwFade{from{opacity:0}to{opacity:1}}
+.vw-arrow{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.08);color:#e2e8f0;display:grid;place-items:center;transition:all var(--t);z-index:2}
+.vw-arrow:hover{background:var(--primary-grad);transform:translateY(-50%) scale(1.08)}
+.vw-arrow svg{width:20px;height:20px}
+.vw-arrow.prev{left:max(10px,calc((100% - 1100px)/2))}
+.vw-arrow.next{right:max(10px,calc((100% - 1100px)/2))}
+.vw-caption{text-align:center;color:#94a3b8;font-size:13.5px;padding:0 20px 10px;min-height:30px}
+.vw-thumbs{display:flex;gap:8px;overflow-x:auto;padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid rgba(255,255,255,.08);scrollbar-width:thin}
+.vw-thumb{flex:0 0 auto;width:96px;height:54px;border-radius:6px;padding:0;overflow:hidden;opacity:.45;outline:2px solid transparent;outline-offset:2px;transition:all var(--t);background:#1a2236}
+.vw-mini{width:1280px;height:720px;transform:scale(.075);transform-origin:top left}
+.vw-mini .sl{border-radius:0;box-shadow:none}
+.vw-thumb:hover{opacity:.8}
+.vw-thumb.active{opacity:1;outline-color:var(--accent)}
+
+/* ============================================================
+   9. App 安装展示模块（移植自 index.html 的个人作品展示）
+   ============================================================ */
+.portfolio-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:30px 32px;box-shadow:var(--shadow);transition:transform var(--t),box-shadow var(--t)}
+.portfolio-card:hover{box-shadow:var(--shadow-hover)}
+.pf-head{display:flex;align-items:flex-start;gap:18px;margin-bottom:20px;flex-wrap:wrap}
+.pf-icon{width:64px;height:64px;border-radius:16px;background:var(--primary-grad);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;box-shadow:0 8px 20px rgba(79,70,229,.3);transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.portfolio-card:hover .pf-icon{transform:scale(1.08) rotate(-4deg)}
+.pf-icon svg{width:30px;height:30px}
+.pf-info{flex:1;min-width:200px}
+.pf-info h3{font-size:20px;font-weight:800;letter-spacing:-.3px;transition:color var(--t)}
+.portfolio-card:hover .pf-info h3{color:var(--primary)}
+.pf-info .pf-meta{font-size:12.5px;color:var(--text-3);margin-top:3px;font-family:var(--mono)}
+.pf-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.pf-tag{padding:3px 10px;font-size:11.5px;border-radius:6px;font-weight:600;line-height:1.6}
+.pf-tag-android{background:#0f9d58;color:#fff}
+.pf-tag-web{background:#6366f1;color:#fff}
+.pf-tag-ios{background:#1c1c1e;color:#fff}
+[data-theme="dark"] .pf-tag-ios{background:#f1f5f9;color:#0f172a}
+.pf-tag-ver{background:var(--primary-soft);color:var(--primary)}
+.pf-tag-size{background:var(--surface-2);color:var(--text-2)}
+.pf-desc{color:var(--text-2);line-height:1.75;font-size:14px;margin-bottom:20px}
+.pf-features{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:24px}
+.pf-features li{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2);padding:9px 12px;background:var(--surface-2);border-radius:8px;transition:transform var(--t)}
+.pf-features li:hover{transform:translateX(3px)}
+.pf-features svg{width:15px;height:15px;color:var(--primary);flex-shrink:0}
+.pf-dl-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 24px;border-radius:11px;background:var(--primary-grad);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;transition:all .3s;box-shadow:0 8px 20px rgba(79,70,229,.3)}
+.pf-dl-btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(79,70,229,.42)}
+.pf-dl-btn:active{transform:translateY(0)}
+.pf-dl-btn svg{width:18px;height:18px}
+.pf-dl-hint{font-size:12px;color:var(--text-3);max-width:260px;line-height:1.5}
+.pf-platforms{padding-top:20px;border-top:1px dashed var(--border)}
+.pf-platforms-title{font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text-3);margin-bottom:14px}
+.pf-plat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.pf-plat{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;flex-direction:column;gap:14px;transition:transform var(--t),border-color var(--t)}
+.pf-plat:hover{transform:translateY(-3px);border-color:var(--primary)}
+.pf-plat-head{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.pf-plat-body{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:auto}
+.pf-plat-body .pf-dl-btn{padding:10px 18px;font-size:13px}
+.pf-ios-note,.pf-disclaimer{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;line-height:1.7;color:var(--text-2);margin-top:16px;padding:12px 14px;border-radius:10px;background:var(--surface-2)}
+.pf-ios-note svg,.pf-disclaimer svg{width:15px;height:15px;flex-shrink:0;margin-top:3px}
+.pf-ios-note svg{color:var(--primary)}
+.pf-disclaimer{background:var(--accent-soft)}
+[data-theme="dark"] .pf-disclaimer{background:rgba(251,191,36,.09)}
+.pf-disclaimer svg{color:var(--accent)}
+
+/* 互动彩蛋 · wavy lines（物理波纹线条） */
+.wave-box{position:relative;height:620px;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;background:var(--surface);box-shadow:var(--shadow);cursor:crosshair}
+.wave-box a-waves{position:absolute;inset:0;display:block;overflow:hidden}
+.wave-box a-waves svg{width:100%;height:100%;display:block}
+.wave-box a-waves path{fill:none;stroke:var(--text);stroke-opacity:.22;stroke-width:1px}
+.wave-hint{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;text-align:center;padding:0 24px}
+.wave-hint-title{font-size:clamp(17px,2.4vw,22px);font-weight:800;letter-spacing:.5px;color:var(--text)}
+.wave-hint-sub{margin-top:8px;font-size:12.5px;color:var(--text-3);font-family:var(--mono)}
+
+/* Toast 轻提示 */
+.toast-wrap{position:fixed;left:50%;bottom:34px;transform:translateX(-50%);z-index:97000;display:flex;flex-direction:column;gap:10px;align-items:center;pointer-events:none}
+.toast{display:flex;align-items:center;gap:9px;background:#1e293b;color:#f8fafc;font-size:13.5px;font-weight:600;padding:11px 20px;border-radius:999px;box-shadow:0 14px 34px rgba(0,0,0,.32);animation:toastIn .3s cubic-bezier(.2,.9,.3,1.2);max-width:88vw}
+.toast svg{width:16px;height:16px;flex-shrink:0}
+.toast.warn{background:#b45309}.toast.success{background:#15803d}
+@keyframes toastIn{from{opacity:0;transform:translateY(14px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+.toast.out{animation:toastOut .28s ease forwards}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px) scale(.96)}}
+
+/* ============================================================
+   10. 页脚 · 响应式 · 打印与无障碍
+   ============================================================ */
+footer{border-top:1px solid var(--border);padding:40px 0 56px;color:var(--text-3);font-size:13px}
+footer .wrap{display:flex;flex-direction:column;gap:8px}
+footer a{color:var(--text-2);text-decoration:underline;text-underline-offset:3px}
+footer a:hover{color:var(--primary)}
+@media(max-width:880px){
+  .nav-links{display:none}
+  section{padding:56px 0}
+  .hero{padding:120px 0 64px}
+  .vw-stage{padding:14px 12px}
+  .vw-arrow{width:40px;height:40px;top:auto;bottom:14px;transform:none}
+  .vw-arrow:hover{transform:scale(1.08)}
+  .vw-arrow.prev{left:18px}.vw-arrow.next{right:18px}
+  .portfolio-card{padding:24px 20px}
+  .wave-box{height:500px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+  .pt-curtain{display:none}
+}
+@media print{
+  nav.topbar,.pt-curtain,.viewer,.lightbox,.hero-cta,.toast-wrap,#play{display:none!important}
+  #app .pf-platforms,#app .pf-ios-note{display:none}
+  body{background:#fff}
+  .portfolio-card,.work-card,.ui-card{box-shadow:none;border-color:#cbd5e1}
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== 转场幕布 ===================== -->
+<div class="pt-curtain" id="ptCurtain" aria-hidden="true">
+  <svg viewBox="0 0 50 50"><circle r="25" cx="25" cy="25"></circle></svg>
+  <p>LOADING</p>
+</div>
+
+<!-- ===================== 顶部导航 ===================== -->
+<nav class="topbar" id="topbar">
+  <div class="inner">
+    <a href="index.html" class="brand" data-pt><span class="dot"></span><span data-i18n="brandName">陈裕和</span></a>
+    <div class="nav-links">
+      <a href="index.html" data-pt data-i18n="navHome">返回主页</a>
+      <a href="#works" class="active" data-i18n="navWorks">作品放映</a>
+      <a href="#quicklook" data-i18n="navQuick">产品速览</a>
+      <a href="#app" data-i18n="navApp">应用下载</a>
+      <a href="#play" data-i18n="navPlay">互动彩蛋</a>
+    </div>
+    <div class="nav-actions">
+      <button class="icon-btn lang-btn" id="langBtn" title="切换语言 / Language">中</button>
+      <button class="icon-btn" id="themeBtn" title="切换主题 / Theme" aria-label="主题">
+        <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ===================== Hero 首屏 ===================== -->
+<header class="hero" id="hero">
+  <div class="hero-media" id="heroMedia">
+    <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Mist-covered%20snow%20mountain%20ridge%20at%20dawn%2C%20deep%20indigo%20blue%20tones%20with%20soft%20warm%20amber%20sunrise%20light%2C%20layered%20clouds%20and%20fog%20in%20valleys%2C%20cinematic%20minimal%20landscape%2C%20serene%20vast%20atmosphere%2C%20ultra%20detailed%20digital%20painting%2C%20no%20text&image_size=landscape_16_9" alt="" loading="eager">
+  </div>
+  <div class="wrap hero-inner">
+    <div class="hero-tag"><span class="pulse"></span><span data-i18n="heroTag">作品展示 · 团队项目</span></div>
+    <div class="hero-title"><span class="grad" data-i18n="heroTitle">见山</span></div>
+    <p class="hero-sub" data-i18n="heroSub">校园心理健康「初步筛查 + 温和引导」系统 —— 一个人的精神世界，需要被看见。</p>
+    <div class="hero-chips">
+      <span class="chip" data-i18n="chipSlides">26 页路演幻灯</span>
+      <span class="chip" data-i18n="chipTeam">团队项目</span>
+      <span class="chip" data-i18n="chipYear">2025</span>
+      <span class="chip" data-i18n="chipField">心理健康 · 教育</span>
+    </div>
+    <div class="hero-cta">
+      <button class="btn btn-accent" id="ctaPlay">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <span data-i18n="ctaPlay">进入放映厅</span>
+      </button>
+      <a class="btn btn-ghost" href="index.html" data-pt>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <span data-i18n="ctaHome">返回主页</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ===================== 01 作品放映厅 ===================== -->
+  <section id="works">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="idx">01</span>
+        <h2 data-i18n="worksTitle">作品放映厅</h2>
+        <span class="line"></span>
+      </div>
+      <div class="works-grid" id="worksGrid"><!-- 由 PROJECTS 渲染 --></div>
+    </div>
+  </section>
+
+  <!-- ===================== 02 产品速览 ===================== -->
+  <section id="quicklook">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="idx">02</span>
+        <h2 data-i18n="uiTitle">产品速览</h2>
+        <span class="line"></span>
+      </div>
+      <p class="sec-intro" data-i18n="uiIntro">真实界面截图 · 点击放大</p>
+      <div class="ui-grid" id="uiGrid"></div>
+    </div>
+  </section>
+
+  <!-- ===================== 03 应用安装与展示 ===================== -->
+  <section id="app">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="idx">03</span>
+        <h2 data-i18n="appTitle">应用安装与展示</h2>
+        <span class="line"></span>
+      </div>
+      <p class="sec-intro" data-i18n="appIntro">独立开发的移动应用 · 点击下载安装</p>
+      <div id="appGrid"></div>
+    </div>
+  </section>
+
+  <!-- ===================== 04 互动彩蛋 · Wavy Lines ===================== -->
+  <section id="play">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="idx">04</span>
+        <h2 data-i18n="playTitle">互动彩蛋</h2>
+        <span class="line"></span>
+      </div>
+      <p class="sec-intro" data-i18n="playIntro">物理波纹线条 · 移动鼠标 / 手指划过试试</p>
+      <div class="wave-box">
+        <a-waves><svg></svg></a-waves>
+        <div class="wave-hint">
+          <div>
+            <p class="wave-hint-title" data-i18n="playHint">仍在努力，未来精彩敬请期待！</p>
+            <p class="wave-hint-sub">Wavy Lines · JIEJOE / Antoine Wodniack</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===================== 页脚 ===================== -->
+<footer>
+  <div class="wrap">
+    <span data-i18n="footTitle">素材来源与致谢</span>
+    <span data-i18n="footSlides">幻灯片与产品界面：「见山」项目团队原创素材</span>
+    <span data-i18n="footCode">跳转转场动画：改编自 JIEJOE《006-jump-animation》（MIT License · github.com/JIEJOE-WEB-Tutorial）</span>
+    <span data-i18n="footWavy">互动波纹线条：改编自 JIEJOE《016-wavy-lines》· 原作 Antoine Wodniack（MIT License）</span>
+    <span data-i18n="footAi">首屏视觉：AI 生成图像</span>
+  </div>
+</footer>
+
+<!-- ===================== 单图灯箱 ===================== -->
+<div class="lightbox" id="lightbox" role="dialog" aria-label="截图放大预览">
+  <button class="lb-close" id="lbClose" aria-label="关闭">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+  </button>
+  <img id="lbImg" alt="">
+</div>
+
+<!-- ===================== Toast 容器 ===================== -->
+<div class="toast-wrap" id="toastWrap" aria-live="polite"></div>
+
+<!-- ===================== 放映厅查看器 ===================== -->
+<div class="viewer" id="viewer" role="dialog" aria-label="幻灯片放映">
+  <div class="vw-head">
+    <div class="vw-title"><span class="dot"></span><span id="vwTitle">见山</span></div>
+    <span class="vw-counter" id="vwCounter">01 / 26</span>
+    <button class="vw-close" id="vwClose" aria-label="关闭放映">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="vw-stage" id="vwStage">
+    <div class="vw-frame" id="vwFrame"></div>
+    <button class="vw-arrow prev" id="vwPrev" aria-label="上一页">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="vw-arrow next" id="vwNext" aria-label="下一页">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+  <p class="vw-caption" id="vwCaption"></p>
+  <div class="vw-thumbs" id="vwThumbs"></div>
+</div>
+
+<!-- App 下载逻辑（内嵌 APK 的既有外部脚本，相对路径） -->
+<script src="app-download.js" async></script>
+
+<script>
+/* ============================================================
+   模块 1：照片路径速记
+   ============================================================ */
+const PH = "assets/photos/";
+
+/* ============================================================
+   模块 2：26 页幻灯片（HTML 模板）
+   ------------------------------------------------------------
+   文字逐字取自 PPT，未作任何增删；个别在 PPT 中位于画布外
+   （放映时不可见）的文字，仍按原位放在画布外由 overflow 裁切。
+   ============================================================ */
+const SLIDES_HTML = [
+/* 01 封面：蓝色渐变 + 三层山峦 + 低位暖阳 */
+`<div class="sl sl-sky">
+  <div style="position:absolute;left:319px;top:330px;width:641px;height:641px;border-radius:50%;background:linear-gradient(180deg,#fff 0%,#FED961 36%,#F2BA02 63%,#F6F8FC 99%);filter:blur(8px)"></div>
+  <img src="${PH}image2.png" alt="" style="position:absolute;left:-224px;top:29px;width:1275px;height:478px" onerror="this.style.display='none'">
+  <img src="${PH}image3.png" alt="" style="position:absolute;left:402px;top:13px;width:1133px;height:588px" onerror="this.style.display='none'">
+  <img src="${PH}image4.png" alt="" style="position:absolute;left:-39px;top:233px;width:1453px;height:533px" onerror="this.style.display='none'">
+  <div style="position:absolute;left:0;right:0;top:438px;text-align:center;font-size:124px;font-weight:900;letter-spacing:16px;text-shadow:0 4px 18px rgba(20,40,90,.3)">见山</div>
+  <div style="position:absolute;left:0;right:0;top:636px;text-align:center;font-size:30px;letter-spacing:2px;color:#fff;text-shadow:0 1px 10px rgba(10,25,60,.75),0 0 3px rgba(10,25,60,.6)">校园心理健康「初步筛查 + 温和引导」系统</div>
+</div>`,
+
+/* 02 开篇：高位太阳 + 三层山峦 */
+`<div class="sl sl-sky">
+  <div style="position:absolute;left:319px;top:-62px;width:641px;height:641px;border-radius:50%;background:linear-gradient(180deg,#fff 0%,#FED961 36%,#F2BA02 63%,#F6F8FC 99%);filter:blur(6px)"></div>
+  <img src="${PH}image2.png" alt="" style="position:absolute;left:-376px;top:152px;width:1275px;height:478px" onerror="this.style.display='none'">
+  <img src="${PH}image3.png" alt="" style="position:absolute;left:586px;top:85px;width:1133px;height:588px" onerror="this.style.display='none'">
+  <img src="${PH}image4.png" alt="" style="position:absolute;left:-73px;top:377px;width:1453px;height:533px" onerror="this.style.display='none'">
+  <div style="position:absolute;left:0;right:0;top:438px;text-align:center;font-size:124px;font-weight:900;letter-spacing:16px;text-shadow:0 4px 18px rgba(20,40,90,.3)">见山</div>
+  <div style="position:absolute;left:0;right:0;top:636px;text-align:center;font-size:30px;letter-spacing:2px;color:#fff;text-shadow:0 1px 10px rgba(10,25,60,.75),0 0 3px rgba(10,25,60,.6)">校园心理健康「初步筛查 + 温和引导」系统</div>
+</div>`,
+
+/* 03 项目故事：黑色标题带 + 蓝色渐变正文 */
+`<div class="sl" style="display:block">
+  <div style="height:220px;background:#000;display:flex;align-items:center;padding:0 64px;font-size:108px;font-weight:900;letter-spacing:10px">项目故事</div>
+  <div class="sl-sky" style="position:absolute;left:0;right:0;top:220px;bottom:0;padding:32px 72px;color:#141925;display:flex;flex-direction:column;gap:10px">
+    <p style="font-size:33px;line-height:1.5">一群来自五湖四海的年轻人</p>
+    <p style="font-size:33px;line-height:1.5">怀揣着对心理教育的创新之志</p>
+    <p style="font-size:33px;line-height:1.5">敏锐地洞察到学校里同学们因为各种原因</p>
+    <p style="font-size:33px;line-height:1.5">往往不愿自主寻求心理老师的帮助</p>
+    <p style="font-size:33px;line-height:1.4">导致学校的心理老师往往成为 <span style="font-size:56px;font-weight:900">“孤家寡人”</span></p>
+    <p style="font-size:33px;line-height:1.4">学校中的许多心理健康设施的建设<span style="font-size:56px;font-weight:900">孤悬空中</span></p>
+  </div>
+  <svg viewBox="0 0 60 40" style="position:absolute;right:56px;bottom:26px;width:46px;height:32px;fill:none;stroke:#1e293b;stroke-width:2.4;stroke-linecap:round"><path d="M4 30c14-2 26-10 34-26"/><path d="M26 2l12 2 2-12" transform="translate(0,14)"/></svg>
+</div>`,
+
+/* 04 在成长道路上：左右分屏照片 + 标题叠层 */
+`<div class="sl">
+  <img src="${PH}image8.jpeg" alt="" style="position:absolute;left:0;top:0;width:645px;height:720px;object-fit:cover" onerror="this.style.display='none'">
+  <img src="${PH}image5.jpeg" alt="" style="position:absolute;left:645px;top:0;width:645px;height:720px;object-fit:cover" onerror="this.style.display='none'">
+  <div style="position:absolute;left:0;top:0;width:645px;height:720px;background:#000"></div>
+  <div style="position:absolute;left:70px;top:80px;max-width:560px;font-size:46px;line-height:1.55;font-weight:700;text-shadow:0 2px 14px rgba(0,0,0,.55)">在成长的道路上，我们曾经希望，有这样的一个工具，来帮助我们</div>
+  <div style="position:absolute;left:70px;top:486px;font-size:104px;font-weight:900;letter-spacing:8px;text-shadow:0 4px 20px rgba(0,0,0,.5)">对抗</div>
+  <div style="position:absolute;left:867px;top:-140px;font-size:62px;font-weight:700">因为</div>
+</div>`,
+
+/* 05 孤独：左照片右黑场 */
+`<div class="sl">
+  <img src="${PH}image10.jpeg" alt="" style="position:absolute;left:0;top:0;width:624px;height:720px;object-fit:cover" onerror="this.style.display='none'">
+  <div style="position:absolute;left:660px;top:30px;font-size:120px;font-weight:900;letter-spacing:8px">孤独</div>
+  <div class="en" style="position:absolute;left:660px;top:330px;font-size:64px">Loneliness</div>
+  <div class="k" style="position:absolute;left:660px;top:450px;font-size:33px;color:#d8dee9">个体来到世界仿佛生来不被认可</div>
+</div>`,
+
+/* 06 焦虑：左黑场右照片 */
+`<div class="sl">
+  <img src="${PH}image11.jpeg" alt="" style="position:absolute;left:658px;top:0;width:830px;height:720px;object-fit:cover" onerror="this.style.display='none'">
+  <div style="position:absolute;left:352px;top:24px;font-size:120px;font-weight:900;letter-spacing:8px">焦虑</div>
+  <div class="en" style="position:absolute;left:388px;top:178px;font-size:64px">Anxiety</div>
+  <div class="k" style="position:absolute;left:252px;top:292px;font-size:33px;color:#d8dee9">这世界往往充满竞争</div>
+</div>`,
+
+/* 07 看不见，是第一道难关 */
+`<div class="sl s7">
+  <h2 class="s7-ld">青少年心理健康最大的困难不是"没方法"，</h2>
+  <h2 class="s7-ld2">而是"看不见"</h2>
+  <p class="s7-sub">学生不愿开口、老师无法逐一分辨、问题爆发时才被发现——"看不见"，才是第一道难关。</p>
+  <div class="s7-src">
+    <p>《中国国民心理健康发展报告（2019-2020）》</p>
+    <p>显示，我国青少年的抑郁检出率为24.6%，其中轻度抑郁为17.2%，重度抑郁为7.4%。</p>
+    <p>有调查显示，约25%的青少年存在心理困扰，但主动求助者不到10%。</p>
+    <p>政协委员调研指出，近40%的学校未达“至少配备1名专职心理健康教师”的要求，28%的学校未按1:500增配教师</p>
+  </div>
+</div>`,
+
+/* 08 所以我们做了见山（雪山填充大字） */
+`<div class="sl">
+  <div style="position:absolute;left:46px;top:26px;font-size:112px;font-weight:900;letter-spacing:4px">所以我们</div>
+  <div style="position:absolute;left:58px;top:206px;font-size:66px;font-weight:700">做了</div>
+  <div style="position:absolute;left:232px;top:118px;font-size:420px;font-weight:900;line-height:1;letter-spacing:24px;background:url(${PH}image12.png) center 30%/cover;-webkit-background-clip:text;background-clip:text;color:transparent">见山</div>
+</div>`,
+
+/* 09 何为见山 */
+`<div class="sl" style="padding:40px 64px;display:flex;flex-direction:column">
+  <div style="font-size:100px;font-weight:900;letter-spacing:3px">何为“见山”？</div>
+  <div style="height:2px;background:rgba(255,255,255,.55);margin:20px 0 0"></div>
+  <div style="flex:1;display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center">
+    <div>
+      <p style="font-size:47px;font-weight:700;line-height:1.4">一个人的精神世界</p>
+      <p style="margin-top:18px"><span style="font-size:40px">需要被</span><span style="font-size:96px;font-weight:900;letter-spacing:2px">看见</span></p>
+    </div>
+    <p style="font-size:42px;line-height:1.6">心理防线不是要打破的障碍，而是必须尊重的前提。</p>
+  </div>
+</div>`,
+
+/* 10 为何能帮助教育 */
+`<div class="sl" style="padding:42px 60px;display:flex;flex-direction:column">
+  <div style="display:flex;gap:28px;align-items:baseline">
+    <span style="font-size:70px;font-weight:900;color:#c7d2fe">见山</span>
+    <span style="font-size:84px;font-weight:900;letter-spacing:2px">为何能帮助教育？</span>
+  </div>
+  <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center">
+    <p style="font-size:38px;line-height:1.7">在个体成长的道路上，不仅需要学习知识来提升对于世界的认知，更需要</p>
+    <div>
+      <p style="font-size:104px;font-weight:900;line-height:1.15">心理教育</p>
+      <p style="font-size:62px;font-weight:700;line-height:1.4;margin-top:10px">来帮助个体认识自身</p>
+    </div>
+  </div>
+</div>`,
+
+/* 11 承接政策刚需 */
+`<div class="sl" style="padding:42px 64px;display:flex;flex-direction:column">
+  <h2 style="font-size:112px;font-weight:900;letter-spacing:3px">更重要的是</h2>
+  <p style="margin-top:30px;font-size:36px;line-height:1.6;color:#d7deeb">教育部等十七部门《全面加强和改进新时代学生心理健康工作专项行动计划（2023—2025 年）》——坚持健康第一，把心理健康工作摆在更加突出位置。</p>
+  <p style="margin-top:auto;margin-bottom:6px;font-size:40px;line-height:1.55;font-weight:900">政策从"有没有心理课"走向<span style="font-size:62px">"能不能早发现、早介入"</span>——见山正是承接这一政策刚需。</p>
+</div>`,
+
+/* 12 核心设计三重点 */
+`<div class="sl s12">
+  <p class="s12-fk">顶部流程线：</p>
+  <p class="s12-flow">看见信号 <i>→</i> 分层筛查 <i>→</i> 温和引导 <i>→</i> 及时守护</p>
+  <ul class="s12-list">
+    <li>核心重点 1｜心理防线优先 —— 学生始终是信息的主人</li>
+    <li>核心重点 2｜初步筛查·只分层不诊断 —— 发现风险分层，诊断交给专业</li>
+    <li>核心重点 3｜温和引导闭环 —— 从觉察到行动的完整链路</li>
+  </ul>
+  <p class="s12-end">筛查是手段，守护才是目的。</p>
+</div>`,
+
+/* 13 解决什么痛点（三列表格） */
+`<div class="sl" style="padding:28px 60px 0;display:block">
+  <h2 style="font-size:104px;font-weight:900;letter-spacing:2px">解决了什么痛点？</h2>
+  <table class="stbl s13-t">
+    <tr><th style="width:33.33%">痛点一（学生端防线）</th><th style="width:33.33%">痛点二（教师端失明）</th><th style="width:33.33%">痛点三（时机错失）</th></tr>
+    <tr>
+      <td>学生有防线，不愿开口 怕被贴标签、怕隐私泄露、怕被区别对待 —— 防线让真实的求助被沉默。</td>
+      <td>老师看不到，只能凭感觉 面对几十上百个学生，无法判断 "谁在低落、谁在硬撑"。</td>
+      <td>发现时，窗口已错过 拒学、自伤、冲突显性爆发时，往往已错过最佳介入时机。</td>
+    </tr>
+  </table>
+  <p style="position:absolute;left:60px;top:740px;font-size:34px;line-height:1.5">轻量化的互动设计，让学生群体的参与更密集但私密</p>
+  <p style="position:absolute;left:60px;top:790px;font-size:34px;line-height:1.5">教师端的严密设计，让情绪有处可去，让老师能够密集观测学生心理动态</p>
+  <p style="position:absolute;left:60px;top:845px;font-size:60px;font-weight:900">防线有力且高效</p>
+</div>`,
+
+/* 14 技术实现 */
+`<div class="sl" style="padding:32px 60px;display:flex;flex-direction:column">
+  <h2 style="font-size:100px;font-weight:900;letter-spacing:2px">我们的技术实现：</h2>
+  <div style="border-top:2px solid #fff;margin:28px 0 34px;position:relative"><span style="position:absolute;left:0;top:-11px;width:22px;height:22px;border-radius:50%;background:#fff"></span></div>
+  <ul class="dot-list">
+    <li>从零构建数据库，为学生的隐私信息保驾护航</li>
+    <li>打造学生老师两端，分别提供贴切服务</li>
+    <li>为每位同学构建档案，确保学生心理健康状况在线，老师能时刻了解</li>
+  </ul>
+</div>`,
+
+/* 15 商业化 · 政策对齐 */
+`<div class="sl s-chrome">
+  <h2 class="t1">对于商业化</h2>
+  <p class="t3" style="margin-top:14px">我们有</p>
+  <p class="s-bd">政策语言直接映射成产品骨架：十条措施第七条要求"构建班主任、专兼职心理健康教师、精神科医师三级心理健康服务体系，开展接力式服务"。见山项目辅助构建心理健康服务体系，校方拿着流程图就能写申报材料——政策对齐</p>
+</div>`,
+
+/* 16 商业化 · 纯软件低门槛 */
+`<div class="sl s-chrome">
+  <h2 class="t1">对于商业化</h2>
+  <p class="t3" style="margin-top:14px">我们有</p>
+  <p class="s-bd">纯软件、不绑硬件、可直接接入智能班牌使用兼容学校已有设备：竞品大量靠"心理咨询室建设方案+设备"打包，我们的差异化就是"不做硬件、可接入既有设备台账"，把门槛从几十万降到生均几元。</p>
+</div>`,
+
+/* 17 商业化 · 竞品优势对比（A1-A6） */
+`<div class="sl" style="padding:30px 56px;display:flex;flex-direction:column">
+  <h2 style="font-size:104px;font-weight:900;letter-spacing:2px;line-height:1.1">对于商业化</h2>
+  <p style="font-size:52px;font-weight:900;margin-top:2px">我们有</p>
+  <p style="font-size:30px;font-weight:700;margin-top:8px">同类竞品优势对比</p>
+  <table class="stbl s17-t">
+    <tr><th style="width:9%">#</th><th style="width:42%">优势</th><th style="width:49%">对照证据</th></tr>
+    <tr><td>A1</td><td>颗粒授权：学生主动勾选、仅当天可见、跨日自动失效、无历史回看</td><td>海外平台最多做到"机构级功能开关"（Mantra 原文"取决于学校开了哪些功能"）；国内产品多未验证，但主流是持续可见</td></tr>
+    <tr><td>A2</td><td>树洞绝对私密：连一个"可能被看到"的位置都没有</td><td>竞品簇几乎全部以"被看到"为价值前提（TalkLife 公开帖、Tellonym 分享、Bottled 回执、Sincerely 影响力计数）</td></tr>
+    <tr><td>A3</td><td>零正文导出 + 私有部署（数据不离开本校）</td><td>情绪记录类多为本地存储但也支持云备份/分享；B 端厂商部署与数据流向未验证</td></tr>
+    <tr><td>A4</td><td>零禁用词红线</td><td>经过实测：4 个心理类 App 中 3 个踩线（含"心理诊断""健康预警"）；Wysa 等也使用 clinical 术语</td></tr>
+    <tr><td>A5</td><td>真实的校内闭环：求助→自动建工单→教师分诊→预约→回复回流</td><td>情绪记录类无教师侧；同伴支持类不做专业转介；AI 类只能给外部资源</td></tr>
+    <tr><td>A6</td><td>主动删减做不到的承诺（告知页只展示 3 条可兑现事实，item4/5/6 因 v1.1 能力未落地而不渲染，代码有注释说明）</td><td>竞品普遍把未落地能力写进商店描述（Quabble 自述"98%/1000 万次"）。这是信任资产</td></tr>
+  </table>
+</div>`,
+
+/* 18 教育价值 */
+`<div class="sl s-chrome">
+  <h2 class="t1">对于教育</h2>
+  <p class="t3" style="margin-top:14px">我们有</p>
+  <div class="s-bd" style="display:flex;flex-direction:column;gap:22px">
+    <p>轻量化的互动设计，让学生群体的参与更密集但私密</p>
+    <p>教师端的严密设计，让情绪有处可去，让老师能够密集观测学生心理动态，完善从学生到教师的心理健康关注全链路搭建</p>
+  </div>
+</div>`,
+
+/* 19 学生端样图（两张） */
+`<div class="sl">
+  <div style="position:absolute;left:34px;top:22px">
+    <p style="font-size:52px;font-weight:900;line-height:1.3">废话少说，让我们展示</p>
+    <p style="font-size:108px;font-weight:900;letter-spacing:4px;margin-top:2px">实力</p>
+  </div>
+  <img src="${PH}image13.png" alt="" style="position:absolute;left:17px;top:272px;width:618px;height:388px;object-fit:cover;object-position:top;border-radius:6px" onerror="this.style.opacity=.2">
+  <img src="${PH}image14.png" alt="" style="position:absolute;left:636px;top:272px;width:618px;height:388px;object-fit:cover;object-position:top;border-radius:6px" onerror="this.style.opacity=.2">
+  <p style="position:absolute;left:852px;top:652px;font-size:36px;font-weight:700">学生端样图展示</p>
+  <p style="position:absolute;left:1300px;top:60px;font-size:52px;font-weight:900">我们有</p>
+</div>`,
+
+/* 20 学生端情绪打卡（一张大图） */
+`<div class="sl">
+  <p style="position:absolute;left:34px;top:24px;right:34px;font-size:42px;font-weight:900;line-height:1.4">学生端·情绪打卡：三档心情打卡 + 可选“我需要帮助”，低门槛、可授权</p>
+  <img src="${PH}image15.png" alt="" style="position:absolute;left:207px;top:186px;width:820px;height:429px;object-fit:cover;object-position:top;border-radius:8px" onerror="this.style.opacity=.2">
+  <p style="position:absolute;left:730px;top:652px;font-size:36px;font-weight:700">学生端首页样图展示</p>
+</div>`,
+
+/* 21 教师端工作总览与数据（两张） */
+`<div class="sl">
+  <p style="position:absolute;left:34px;top:26px;font-size:112px;font-weight:900;letter-spacing:4px">还有</p>
+  <img src="${PH}image16.png" alt="" style="position:absolute;left:25px;top:218px;width:614px;height:382px;object-fit:cover;object-position:top;border-radius:6px" onerror="this.style.opacity=.2">
+  <img src="${PH}image18.png" alt="" style="position:absolute;left:640px;top:218px;width:614px;height:382px;object-fit:cover;object-position:top;border-radius:6px" onerror="this.style.opacity=.2">
+  <p style="position:absolute;left:110px;top:652px;font-size:34px;font-weight:700">教师端首页样图展示</p>
+  <p style="position:absolute;left:668px;top:652px;font-size:34px;font-weight:700">教师端表格页样图展示</p>
+</div>`,
+
+/* 22 P1/P2/P3 分诊台（一张大图） */
+`<div class="sl">
+  <p style="position:absolute;left:34px;top:28px;right:34px;font-size:44px;font-weight:900">P1/P2/P3 分诊台，最需要的人顶到最前面</p>
+  <img src="${PH}image18.png" alt="" style="position:absolute;left:233px;top:132px;width:812px;height:474px;object-fit:cover;object-position:top;border-radius:8px" onerror="this.style.opacity=.2">
+  <p style="position:absolute;left:852px;top:652px;font-size:36px;font-weight:700">教师端样图展示</p>
+</div>`,
+
+/* 23 分诊逻辑与预警机制 */
+`<div class="sl" style="padding:30px 60px;display:flex;flex-direction:column">
+  <p style="font-size:40px;font-weight:900">P1/P2/P3 分诊台，最需要的人顶到最前面</p>
+  <div style="margin-top:52px;display:flex;flex-direction:column;gap:26px;font-size:33px;line-height:1.7">
+    <p>分诊逻辑：综合"病史 + 最近情绪 + 是否求助"自动分层，P1/P2/P3 优先级一目了然。</p>
+    <p>预警机制（本页核心）：连续 3 次"低落且不求助"自动触发预警——精准捕捉最容易被"忽略的沉默者"。</p>
+    <p>价值点：让最需要的人，顶到最前面；让最沉默的人，被主动看见。</p>
+  </div>
+</div>`,
+
+/* 24 竞品分析：竖排标语 + 两列对照表 */
+`<div class="sl">
+  <div style="position:absolute;left:34px;top:18px">
+    <p style="font-size:56px;font-weight:900;line-height:1.2">竞品分析</p>
+    <p style="font-size:30px;font-weight:700;margin-top:6px">传统做法 vs 见山</p>
+  </div>
+  <p class="s24-slogan">「见山」不是监控机器，而是一张温柔的安全网。</p>
+  <table class="stbl s24-t" style="position:absolute;left:214px;top:200px;width:1034px">
+    <tr><th style="width:50%">传统做法的风险</th><th style="width:50%">「见山」的对应设计</th></tr>
+    <tr><td>学生怕被贴标签，不愿上报</td><td>打卡低门槛、树洞匿名、分享自愿</td></tr>
+    <tr><td>老师看不到 "沉默的低落者"</td><td>预警机制主动捕捉 "连续低落且不求助"</td></tr>
+    <tr><td>隐私泄露、正文被滥用</td><td>选择性分享 + 当日遮罩 + 零正文导出</td></tr>
+    <tr><td>紧急个案淹没在日常里</td><td>P1/P2/P3 分诊，把最需要的人顶到最前面</td></tr>
+    <tr><td>约谈资源冲突、排期混乱</td><td>教师 / 咨询室双资源冲突检测 + 候补递补</td></tr>
+  </table>
+</div>`,
+
+/* 25 商业模式 */
+`<div class="sl" style="padding:32px 56px;display:flex;flex-direction:column">
+  <h2 style="font-size:64px;font-weight:900;letter-spacing:3px">商业模式</h2>
+  <div style="margin-top:44px;font-size:31px;line-height:1.85;display:flex;flex-direction:column;gap:14px">
+    <p>面向中小学/教育局的 B2B / B2G 数字化心理关怀平台，以"软件订阅 + 增值服务"为核心。</p>
+    <p>上游：心理健康专业资源（筛查量表、引导话术库）</p>
+    <p>下游：学校、教育局、家长（知情与协作）</p>
+    <p>盈利方式：按学校/学区的年度软件订阅；增值服务（教师培训、话术定制、数据分析报告）</p>
+  </div>
+</div>`,
+
+/* 26 THANK YOU */
+`<div class="sl" style="display:grid;place-items:center">
+  <span class="en" style="font-size:148px;letter-spacing:8px">THANK YOU!</span>
+</div>`
+];
+
+/* ============================================================
+   模块 3：项目配置（三槽位架构）
+   ============================================================ */
+const PROJECTS = [
+  {
+    id: "jianshan",
+    visible: true,
+    badge: "TEAM · 2025",
+    title: { zh: "见山", en: "JianShan" },
+    desc: {
+      zh: "校园心理健康「初步筛查 + 温和引导」系统。以心理防线优先、只分层不诊断、温和引导闭环为设计核心，帮助学生端与教师端协同，让最沉默的人被主动看见。",
+      en: "A campus mental health screening & gentle-guidance system with a privacy-first design, connecting students and teachers so the quietest voices are seen."
+    },
+    tags: {
+      zh: ["心理健康", "双端系统", "数据库", "隐私优先"],
+      en: ["Mental Health", "Dual-End App", "Database", "Privacy-First"]
+    },
+    cover: "assets/slides/slide-01.jpg",
+    /* slides：html 指向 SLIDES_HTML 对应模板；note 为查看器图注 */
+    slides: SLIDES_HTML.map((html, i) => ({
+      html,
+      note: {
+        zh: ["封面 · 见山","开篇 · 校园心理健康系统","项目故事","成长路上的期待","孤独 · Loneliness","焦虑 · Anxiety","看不见，是第一道难关","所以我们做了「见山」","何为「见山」","为何能帮助教育","承接政策刚需","核心设计三重点","创新点 · 痛点映射","技术实现","商业化 · 政策对齐","商业化 · 纯软件低门槛","商业化 · 竞品优势对比","教育价值","实力展示","学生端 · 情绪打卡首页","教师端 · 工作总览与数据","教师端 · P1/P2/P3 分诊台","分诊逻辑与预警机制","竞品分析 · 传统 vs 见山","商业模式","致谢"][i],
+        en: ["Cover · JianShan","Opening · Campus Mental Health","Project Story","What We Wished For","Loneliness","Anxiety","Invisibility: the First Hurdle","So We Built JianShan","What Is JianShan","Why It Helps Education","Aligned with Policy","Three Design Pillars","Innovations & Pain Points","Technical Implementation","Business · Policy Alignment","Business · Software-Only","Business · Competitive Edge","Value for Education","Showcase Begins","Student · Mood Check-in Home","Teacher · Dashboard & Data","Teacher · Triage Board","Triage Logic & Alerts","Analysis · Traditional vs JianShan","Business Model","Thank You"][i]
+      }
+    })),
+    uiShots: [
+      { src: "assets/media/ui-student-home.png", zh: "学生端 · 情绪打卡首页", en: "Student · Mood Check-in" },
+      { src: "assets/media/ui-student-treehole.png", zh: "学生端 · 树洞页", en: "Student · Private Treehole" },
+      { src: "assets/media/ui-teacher-export.png", zh: "教师端 · 数据导出表格", en: "Teacher · Data Export" }
+    ]
+  },
+  { id: "slot-2", visible: false, badge: "", title: { zh: "", en: "" }, desc: { zh: "", en: "" },
+    tags: { zh: [], en: [] }, cover: "", slides: [], uiShots: [] },
+  { id: "slot-3", visible: false, badge: "", title: { zh: "", en: "" }, desc: { zh: "", en: "" },
+    tags: { zh: [], en: [] }, cover: "", slides: [], uiShots: [] }
+];
+
+/* ============================================================
+   模块 4：i18n 双语文案
+   ============================================================ */
+const I18N = {
+  zh: {
+    brandName:"陈裕和", navHome:"返回主页", navWorks:"作品放映", navQuick:"产品速览", navApp:"应用下载", navPlay:"互动彩蛋",
+    heroTag:"作品展示 · 团队项目", heroTitle:"见山",
+    heroSub:"校园心理健康「初步筛查 + 温和引导」系统 —— 一个人的精神世界，需要被看见。",
+    chipSlides:"26 页路演幻灯", chipTeam:"团队项目", chipYear:"2025", chipField:"心理健康 · 教育",
+    ctaPlay:"进入放映厅", ctaHome:"返回主页",
+    worksTitle:"作品放映厅", uiTitle:"产品速览",
+    uiIntro:"真实界面截图 · 点击放大",
+    appTitle:"应用安装与展示", appIntro:"独立开发的移动应用 · 点击下载安装",
+    playTitle:"互动彩蛋", playIntro:"物理波纹线条 · 移动鼠标 / 手指划过试试",
+    playHint:"仍在努力，未来精彩敬请期待！",
+    appPlatforms:"支持平台", appDownload:"下载安装包",
+    appIosNote:"iOS 版为网页应用（PWA），无需装安装包；用 Safari 打开后添加到主屏幕即可。",
+    appDisclaimer:"本作品仍在持续完善中，功能与体验如有不足之处，敬请见谅，也欢迎提出宝贵建议。",
+    toastApp:"正在下载校园提醒 App 安装包…", toastAppFail:"安装包未就绪，请稍后再试",
+    play:"放映",
+    footTitle:"素材来源与致谢",
+    footSlides:"幻灯片与产品界面：「见山」项目团队原创素材",
+    footCode:"跳转转场动画：改编自 JIEJOE《006-jump-animation》（MIT License · github.com/JIEJOE-WEB-Tutorial）",
+    footWavy:"互动波纹线条：改编自 JIEJOE《016-wavy-lines》· 原作 Antoine Wodniack（MIT License）",
+    footAi:"首屏视觉：AI 生成图像"
+  },
+  en: {
+    brandName:"Chen Yuhe", navHome:"Home", navWorks:"Showcase", navQuick:"Quick Look", navApp:"Get the App", navPlay:"Playground",
+    heroTag:"Portfolio · Team Project", heroTitle:"JianShan",
+    heroSub:"A campus mental health screening & gentle-guidance system — every inner world deserves to be seen.",
+    chipSlides:"26 Pitch Slides", chipTeam:"Team Project", chipYear:"2025", chipField:"Mental Health · Edu",
+    ctaPlay:"Enter Theater", ctaHome:"Back Home",
+    worksTitle:"Theater", uiTitle:"Quick Look",
+    uiIntro:"Real UI screenshots · click to zoom",
+    appTitle:"Install & Showcase", appIntro:"Self-developed mobile app · click to download",
+    playTitle:"Playground", playIntro:"Physics wavy lines · move your mouse or swipe across",
+    playHint:"Still working on it — stay tuned for something great!",
+    appPlatforms:"Platforms", appDownload:"Download APK",
+    appIosNote:"The iOS build is a web app (PWA) — no installer needed. Open it in Safari and add it to your Home Screen.",
+    appDisclaimer:"This project is still a work in progress. Any rough edges are much appreciated feedback — thank you for your understanding.",
+    toastApp:"Downloading Campus Reminder app…", toastAppFail:"Installer not ready, please retry",
+    play:"Play",
+    footTitle:"Assets & Credits",
+    footSlides:"Slides & UI mockups: original material by the JianShan team",
+    footCode:"Page transition: adapted from JIEJOE's 006-jump-animation (MIT License · github.com/JIEJOE-WEB-Tutorial)",
+    footWavy:"Wavy-lines interaction: adapted from JIEJOE's 016-wavy-lines · original by Antoine Wodniack (MIT License)",
+    footAi:"Hero visual: AI-generated image"
+  }
+};
+let curLang = localStorage.getItem("lang") || "zh";
+
+/* ============================================================
+   模块 5：小工具 —— $ 选择器 / Toast
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const ICONS = {
+  smartphone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>',
+  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  external:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+  info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+  warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+};
+function toast(msg, type = ""){
+  const wrap = $("#toastWrap");
+  const el = document.createElement("div");
+  el.className = "toast " + type;
+  el.innerHTML = (type === "success" ? ICONS.check : type === "warn" ? ICONS.warn : ICONS.info) + "<span></span>";
+  el.querySelector("span").textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => { el.classList.add("out"); setTimeout(() => el.remove(), 300); }, 2400);
+}
+
+/* ============================================================
+   模块 6：i18n / 主题
+   ============================================================ */
+function applyI18n(){
+  document.documentElement.lang = curLang === "zh" ? "zh-CN" : "en";
+  document.querySelectorAll("[data-i18n]").forEach(n => {
+    const v = I18N[curLang][n.getAttribute("data-i18n")];
+    if(v) n.textContent = v;
+  });
+  $("#langBtn").textContent = curLang === "zh" ? "中" : "EN";
+  renderWorks();
+  renderQuickLook();
+  renderApp();
+}
+function setTheme(theme){
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem("theme", theme);
+  $("#iconMoon").style.display = theme === "dark" ? "none" : "block";
+  $("#iconSun").style.display  = theme === "dark" ? "block" : "none";
+}
+function setupTheme(){
+  const saved = localStorage.getItem("theme");
+  const prefersDark = matchMedia("(prefers-color-scheme:dark)").matches;
+  setTheme(saved || (prefersDark ? "dark" : "light"));
+  $("#themeBtn").addEventListener("click", () => {
+    setTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
+}
+
+/* ============================================================
+   模块 7：转场幕布
+   ============================================================ */
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function setupCurtain(){
+  const curtain = $("#ptCurtain");
+  if(reducedMotion){ curtain.remove(); }
+  else {
+    /* DOM 解析完成即收起，不等待图片/脚本全部下载 */
+    const dismissCurtain = () => setTimeout(() => curtain.classList.add("out"), 250);
+    if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", dismissCurtain);
+    else dismissCurtain();
+    window.addEventListener("pageshow", e => { if(e.persisted) curtain.classList.add("out"); });
+  }
+  document.querySelectorAll("a[data-pt]").forEach(a => {
+    a.addEventListener("click", e => {
+      if(reducedMotion) return;
+      e.preventDefault();
+      const target = a.getAttribute("href");
+      curtain.classList.remove("out");
+      setTimeout(() => { window.location.href = target; }, 1000);
+    });
+  });
+}
+
+/* ============================================================
+   模块 8：作品卡片 + 产品速览渲染
+   ============================================================ */
+const coverObserver = ("ResizeObserver" in window) ? new ResizeObserver(entries => {
+  entries.forEach(en => {
+    const stage = en.target.querySelector(".cover-stage");
+    if (stage) stage.style.transform = `scale(${en.contentRect.width / 1280})`;
+  });
+}) : null;
+function renderWorks(){
+  const grid = $("#worksGrid"); grid.innerHTML = "";
+  const visible = PROJECTS.filter(p => p.visible);
+  grid.classList.toggle("solo", visible.length === 1);
+  visible.forEach(p => {
+    const card = document.createElement("article");
+    card.className = "work-card";
+    card.innerHTML = `
+      <div class="work-cover">
+        <div class="cover-mini"><div class="cover-stage"></div></div>
+        <span class="badge">${p.badge}</span>
+      </div>
+      <div class="work-body">
+        <h3>${p.title[curLang]}</h3>
+        <p class="desc">${p.desc[curLang]}</p>
+        <div class="work-tags">${p.tags[curLang].map(x => `<span>${x}</span>`).join("")}</div>
+        <div class="work-actions">
+          <button class="btn btn-primary" data-play="${p.id}">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span>${I18N[curLang].play}</span>
+          </button>
+          <span class="chip">${p.slides.length} ${curLang === "zh" ? "页" : "slides"}</span>
+        </div>
+      </div>`;
+    card.querySelector("[data-play]").addEventListener("click", () => openViewer(p));
+    /* 封面：与放映厅共享同一 HTML，实时缩放微缩渲染 */
+    const coverBox = card.querySelector(".cover-mini");
+    const coverStage = card.querySelector(".cover-stage");
+    coverStage.appendChild(buildSlideNode(p.slides[0]));
+    const fitCover = () => { coverStage.style.transform = `scale(${coverBox.clientWidth / 1280})`; };
+    fitCover();
+    if ("ResizeObserver" in window) coverObserver.observe(coverBox);
+    else addEventListener("resize", fitCover);
+    grid.appendChild(card);
+  });
+}
+function renderQuickLook(){
+  const grid = $("#uiGrid"); grid.innerHTML = "";
+  PROJECTS.filter(p => p.visible && p.uiShots.length).forEach(p => {
+    p.uiShots.forEach(s => {
+      const fig = document.createElement("figure");
+      fig.className = "ui-card";
+      fig.innerHTML = `
+        <div class="shot"><img src="${s.src}" alt="${s[curLang]}" loading="lazy"
+             onerror="this.style.opacity=.25"></div>
+        <figcaption>${s[curLang]}
+          <svg class="zoom" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </figcaption>`;
+      fig.addEventListener("click", () => openLightbox(s.src, s[curLang]));
+      grid.appendChild(fig);
+    });
+  });
+}
+
+/* ============================================================
+   模块 9：App 安装展示模块（数据 + 渲染 + 事件）
+   ============================================================ */
+const APP_DATA = {
+  zh: {
+    name:"校园提醒 App", tagline:"Android · iOS 双平台 · 独立开发",
+    desc:"独立完成需求设计、界面实现与发布上线的校园生活类 App，覆盖课表、日程、倒数日、每日打卡与作业管理五大模块。v1.0.15 重做了应用外壳：切换界面的标签栏常驻屏幕底边，页面只允许上下滑动，横向不再乱跑。技术上用一套网页代码复用三端——安卓是 WebView 壳 + 原生 AlarmManager 调度，应用被划掉或手机重启后仍能准点提醒；iOS 走 PWA + Service Worker 离线缓存。构建绕过 Gradle，直接用安卓 SDK 的 aapt2 / d8 / apksigner 打包，配套 8 套自动化测试、260+ 条断言。数据全部存在本机，离线可用、无需注册。",
+    features:["课表 / 日程 / 倒数日 / 打卡 / 作业 五大模块","课表支持自定义周次 · 冲突自检与 ICS 导出","今日可视化时间轴 · 当前课程高亮","标签栏常驻屏幕底边 · 全页面只允许上下滑动","一套网页代码复用三端 · 原生闹钟调度，关掉应用也能提醒"],
+    platforms:[
+      {key:"android",tag:"Android",tagClass:"pf-tag-android",ver:"v1.0.15",size:"239 KB",
+       note:"APK · WebView 壳 + 原生闹钟调度，应用被划掉也能提醒，点击后可安装",action:"download"},
+      {key:"ios",tag:"iOS",tagClass:"pf-tag-ios",ver:"v1.0.15 网页版",size:"PWA",
+       note:"PWA · Service Worker 离线缓存，Safari 打开后「添加到主屏幕」即可当 App 用",
+       action:"link",url:"campus-reminder-ios-pwa/index.html"}
+    ]
+  },
+  en: {
+    name:"Campus Reminder App", tagline:"Android & iOS · Self-built end to end",
+    desc:"Independently designed, built and shipped a campus-life app covering five modules: timetable, schedule, countdowns, daily check-ins and homework. v1.0.15 rebuilds the app shell so the tab bar stays pinned to the bottom of the screen and every screen scrolls vertically only. One web codebase ships to three targets — the Android build is a WebView shell plus native AlarmManager scheduling, so reminders still fire after the app is swiped away or the phone reboots; iOS runs as an offline-cached PWA. The build bypasses Gradle and drives the Android SDK's aapt2 / d8 / apksigner directly, backed by 8 automated test suites with 260+ assertions. All data stays on device — works offline, no signup required.",
+    features:["Timetable, schedule, countdown, check-in and homework modules","Custom teaching weeks · conflict check and .ics export","Visual Today timeline with current-item highlight","Tab bar pinned to the bottom · vertical-only scrolling","One web codebase for three targets · native alarms fire even when closed"],
+    platforms:[
+      {key:"android",tag:"Android",tagClass:"pf-tag-android",ver:"v1.0.15",size:"239 KB",
+       note:"APK · WebView shell + native alarms, still fires when the app is closed",action:"download"},
+      {key:"ios",tag:"iOS",tagClass:"pf-tag-ios",ver:"v1.0.15 web",size:"PWA",
+       note:"PWA · Service Worker offline cache — open in Safari, then \"Add to Home Screen\"",
+       action:"link",url:"campus-reminder-ios-pwa/index.html"}
+    ]
+  }
+};
+function renderApp(){
+  const grid = $("#appGrid"); if(!grid) return;
+  const d = APP_DATA[curLang], s = I18N[curLang];
+  const platHtml = d.platforms.map(p => {
+    let btn;
+    if(p.action === "download"){
+      btn = `<button class="pf-dl-btn" data-pf="android" title="${d.name} · APK">
+        ${ICONS.download}<span>${s.appDownload}</span></button>`;
+    }else{
+      btn = `<a class="pf-dl-btn" href="${p.url}" target="_blank" rel="noopener" title="${d.name} · Web">
+        ${ICONS.external}<span>${curLang === "zh" ? "在线打开" : "Open online"}</span></a>`;
+    }
+    return `<div class="pf-plat">
+      <div class="pf-plat-head">
+        <span class="pf-tag ${p.tagClass}">${p.tag}</span>
+        <span class="pf-tag pf-tag-ver">${p.ver}</span>
+        <span class="pf-tag pf-tag-size">${p.size}</span>
+      </div>
+      <div class="pf-plat-body">${btn}<span class="pf-dl-hint">${p.note}</span></div>
+    </div>`;
+  }).join("");
+  grid.innerHTML = `<div class="portfolio-card">
+    <div class="pf-head">
+      <div class="pf-icon">${ICONS.smartphone}</div>
+      <div class="pf-info">
+        <h3>${d.name}</h3>
+        <div class="pf-meta">${d.tagline}</div>
+      </div>
+    </div>
+    <p class="pf-desc">${d.desc}</p>
+    <ul class="pf-features">${d.features.map(f => `<li>${ICONS.check}<span>${f}</span></li>`).join("")}</ul>
+    <div class="pf-platforms">
+      <div class="pf-platforms-title">${s.appPlatforms}</div>
+      <div class="pf-plat-grid">${platHtml}</div>
+    </div>
+    <p class="pf-ios-note">${ICONS.info}<span>${s.appIosNote}</span></p>
+    <p class="pf-disclaimer">${ICONS.warn}<span>${s.appDisclaimer}</span></p>
+  </div>`;
+  const dlBtn = grid.querySelector('[data-pf="android"]');
+  if(dlBtn){
+    dlBtn.addEventListener("click", () => {
+      if(typeof triggerAppDownload === "function"){
+        const ok = triggerAppDownload();
+        toast(ok ? s.toastApp : s.toastAppFail, ok ? "success" : "warn");
+      }else{
+        toast(s.toastAppFail, "warn");
+      }
+    });
+  }
+}
+
+/* ============================================================
+   模块 10：放映厅查看器 —— DOM 节点渲染 + 等比缩放
+   ============================================================ */
+const viewer = $("#viewer");
+let vwProject = null, vwIndex = 0, lastFocus = null;
+
+/* 由 slide 配置构建真实 DOM 节点 */
+function buildSlideNode(slide){
+  const wrap = document.createElement("div");
+  wrap.innerHTML = slide.html;
+  return wrap.firstElementChild;
+}
+function openViewer(p, start = 0){
+  vwProject = p; vwIndex = start; lastFocus = document.activeElement;
+  $("#vwTitle").textContent = p.title[curLang];
+  buildThumbs();
+  showSlide(vwIndex);
+  viewer.classList.add("open");
+  document.body.classList.add("viewer-open");
+  fitFrame();
+  $("#vwClose").focus();
+}
+function closeViewer(){
+  viewer.classList.remove("open");
+  document.body.classList.remove("viewer-open");
+  if(lastFocus) lastFocus.focus();
+}
+/* 缩略图：与主舞台共享同一份 HTML，1280×720 画布缩到 96×54 */
+function buildThumbs(){
+  const box = $("#vwThumbs"); box.innerHTML = "";
+  vwProject.slides.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.className = "vw-thumb"; b.setAttribute("aria-label", String(i + 1));
+    const mini = document.createElement("div");
+    mini.className = "vw-mini";
+    mini.appendChild(buildSlideNode(s));
+    b.appendChild(mini);
+    b.addEventListener("click", () => showSlide(i));
+    box.appendChild(b);
+  });
+}
+function showSlide(i){
+  const n = vwProject.slides.length;
+  vwIndex = (i + n) % n;
+  const s = vwProject.slides[vwIndex];
+  const frame = $("#vwFrame");
+  frame.innerHTML = "";
+  frame.appendChild(buildSlideNode(s));
+  frame.classList.remove("vw-anim"); void frame.offsetWidth; frame.classList.add("vw-anim");
+  $("#vwCounter").textContent = String(vwIndex + 1).padStart(2, "0") + " / " + String(n).padStart(2, "0");
+  $("#vwCaption").textContent = s.note[curLang];
+  document.querySelectorAll(".vw-thumb").forEach((b, k) => {
+    b.classList.toggle("active", k === vwIndex);
+    if(k === vwIndex) b.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
+  });
+  fitFrame();
+}
+/* 按舞台实际尺寸等比缩放 1280×720 画布 */
+function fitFrame(){
+  if(!viewer.classList.contains("open")) return;
+  const stage = $("#vwStage"), frame = $("#vwFrame");
+  const padX = parseFloat(getComputedStyle(stage).paddingLeft) + parseFloat(getComputedStyle(stage).paddingRight);
+  const padY = parseFloat(getComputedStyle(stage).paddingTop) + parseFloat(getComputedStyle(stage).paddingBottom);
+  const scale = Math.max(0.1, Math.min((stage.clientWidth - padX - 8) / 1280, (stage.clientHeight - padY - 8) / 720));
+  frame.style.transform = `translate(-50%,-50%) scale(${scale})`;
+}
+$("#vwClose").addEventListener("click", closeViewer);
+$("#vwPrev").addEventListener("click", () => showSlide(vwIndex - 1));
+$("#vwNext").addEventListener("click", () => showSlide(vwIndex + 1));
+addEventListener("resize", fitFrame);
+document.addEventListener("keydown", e => {
+  if(!viewer.classList.contains("open")) return;
+  if(e.key === "Escape") closeViewer();
+  if(e.key === "ArrowLeft") showSlide(vwIndex - 1);
+  if(e.key === "ArrowRight") showSlide(vwIndex + 1);
+});
+/* 触摸滑动翻页 */
+let tsX = 0, tsY = 0;
+$("#vwStage").addEventListener("touchstart", e => { tsX = e.touches[0].clientX; tsY = e.touches[0].clientY; }, { passive: true });
+$("#vwStage").addEventListener("touchend", e => {
+  const dx = e.changedTouches[0].clientX - tsX, dy = e.changedTouches[0].clientY - tsY;
+  if(Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy)) showSlide(vwIndex + (dx < 0 ? 1 : -1));
+}, { passive: true });
+
+/* 单图灯箱 */
+function openLightbox(src, alt){ $("#lbImg").src = src; $("#lbImg").alt = alt || ""; $("#lightbox").classList.add("open"); document.body.classList.add("viewer-open"); }
+function closeLightbox(){ $("#lightbox").classList.remove("open"); document.body.classList.remove("viewer-open"); }
+$("#lbClose").addEventListener("click", closeLightbox);
+$("#lightbox").addEventListener("click", e => { if(e.target.id === "lightbox") closeLightbox(); });
+
+/* ============================================================
+   模块 12：互动彩蛋 —— Wavy Lines（改编自 JIEJOE《016-wavy-lines》，原作 Antoine Wodniack，MIT）
+   鼠标/手指划过时推开线条，带弹性、阻尼、缓动
+   ============================================================ */
+class AWaves extends HTMLElement {
+  connectedCallback() {
+    this.svg = this.querySelector("svg");
+    this.mouse = { x: 0, y: 0, lx: 0, ly: 0, sx: 0, sy: 0, v: 0, vs: 0, a: 0 };
+    this.lines = []; this.paths = []; this.running = false;
+    this.reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this.bindEvents(); this.setSize(); this.setLines();
+    if (this.reduced) { this.drawLines(); return; } /* 减弱动效：只画静态直线 */
+    this.io = new IntersectionObserver(en => {
+      en[0].isIntersecting ? this.start() : this.stop();
+    });
+    this.io.observe(this);
+  }
+  disconnectedCallback() { this.stop(); this.io && this.io.disconnect(); }
+  start() { if (!this.running) { this.running = true; requestAnimationFrame(this.tick.bind(this)); } }
+  stop() { this.running = false; }
+  bindEvents() {
+    addEventListener("resize", () => { this.setSize(); this.setLines(); if (this.reduced) this.drawLines(); });
+    addEventListener("mousemove", e => this.updateMousePosition(e.clientX, e.clientY), { passive: true });
+    addEventListener("touchmove", e => this.updateMousePosition(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+  }
+  setSize() {
+    this.bounding = this.getBoundingClientRect();
+    this.svg.style.width = `${this.bounding.width}px`;
+    this.svg.style.height = `${this.bounding.height}px`;
+  }
+  setLines() {
+    const { width, height } = this.bounding;
+    this.lines = [];
+    this.paths.forEach(p => p.remove()); this.paths = [];
+    const xGap = 10, yGap = 32;
+    const oWidth = width + 200, oHeight = height + 30;
+    const totalLines = Math.ceil(oWidth / xGap), totalPoints = Math.ceil(oHeight / yGap);
+    const xStart = (width - xGap * totalLines) / 2, yStart = (height - yGap * totalPoints) / 2;
+    for (let i = 0; i <= totalLines; i++) {
+      const points = [];
+      for (let j = 0; j <= totalPoints; j++)
+        points.push({ x: xStart + xGap * i, y: yStart + yGap * j, cursor: { x: 0, y: 0, vx: 0, vy: 0 } });
+      this.lines.push(points);
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      this.svg.appendChild(path); this.paths.push(path);
+    }
+  }
+  updateMousePosition(x, y) {
+    const b = this.getBoundingClientRect();
+    this.mouse.x = x - b.left; this.mouse.y = y - b.top;
+  }
+  movePoints() {
+    const { lines, mouse } = this;
+    lines.forEach(points => points.forEach(p => {
+      const dx = p.x - mouse.sx, dy = p.y - mouse.sy;
+      const d = Math.hypot(dx, dy), l = Math.max(175, mouse.vs);
+      if (d < l) {
+        const f = 1 - d / l;
+        p.cursor.vx += Math.cos(mouse.a) * f * mouse.vs * 0.08;
+        p.cursor.vy += Math.sin(mouse.a) * f * mouse.vs * 0.08;
+      }
+      /* 回弹节奏放慢 75%（周期约为原来 4 倍）：弹簧 0.005→0.00031，阻尼 0.925→0.98，
+         推开力度不变，波纹被划开后悠悠地回位，余韵更长、互动感更强 */
+      p.cursor.vx += (0 - p.cursor.x) * 0.00031;
+      p.cursor.vy += (0 - p.cursor.y) * 0.00031;
+      p.cursor.vx *= 0.98; p.cursor.vy *= 0.98;
+      p.cursor.x += p.cursor.vx * 2; p.cursor.y += p.cursor.vy * 2;
+      p.cursor.x = Math.min(100, Math.max(-100, p.cursor.x));
+      p.cursor.y = Math.min(100, Math.max(-100, p.cursor.y));
+    }));
+  }
+  moved(point, withCursorForce = true) {
+    return {
+      x: Math.round((point.x + (withCursorForce ? point.cursor.x : 0)) * 10) / 10,
+      y: Math.round((point.y + (withCursorForce ? point.cursor.y : 0)) * 10) / 10
+    };
+  }
+  drawLines() {
+    this.lines.forEach((points, lIndex) => {
+      const p1 = this.moved(points[0], false);
+      let d = `M ${p1.x} ${p1.y}`;
+      points.forEach((p, pIndex) => {
+        p = this.moved(p, pIndex !== points.length - 1);
+        d += `L ${p.x} ${p.y}`;
+      });
+      this.paths[lIndex].setAttribute("d", d);
+    });
+  }
+  tick() {
+    if (!this.running) return;
+    const { mouse } = this;
+    mouse.sx += (mouse.x - mouse.sx) * 0.1;
+    mouse.sy += (mouse.y - mouse.sy) * 0.1;
+    const dx = mouse.x - mouse.lx, dy = mouse.y - mouse.ly;
+    const d = Math.hypot(dx, dy);
+    mouse.v = d;
+    mouse.vs += (d - mouse.vs) * 0.1;
+    mouse.vs = Math.min(100, mouse.vs);
+    mouse.lx = mouse.x; mouse.ly = mouse.y;
+    mouse.a = Math.atan2(dy, dx);
+    this.movePoints(); this.drawLines();
+    requestAnimationFrame(this.tick.bind(this));
+  }
+}
+customElements.define("a-waves", AWaves);
+
+/* ============================================================
+   模块 11：初始化
+   ============================================================ */
+$("#ctaPlay").addEventListener("click", () => openViewer(PROJECTS.find(p => p.visible)));
+$("#langBtn").addEventListener("click", () => {
+  curLang = curLang === "zh" ? "en" : "zh";
+  localStorage.setItem("lang", curLang);
+  applyI18n();
+});
+const heroImg = $("#heroMedia img");
+if(heroImg.complete && heroImg.naturalWidth === 0) heroImg.parentElement.classList.add("img-fallback");
+heroImg.addEventListener("error", function(){ this.parentElement.classList.add("img-fallback"); });
+
+setupTheme();
+setupCurtain();
+applyI18n();
+</script>
+</body>
+</html>
